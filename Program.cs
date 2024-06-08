@@ -25,6 +25,7 @@ app.UseHttpsRedirection();
 app.UseCors();
 
 var alunos = new List<Aluno>();
+var alunoLogado = new List<AlunoLogado>();
 
 app.MapGet("/alunos", () =>
 {
@@ -92,6 +93,23 @@ app.MapGet("/alunos/{email}/{senha}", (string email, string senha) =>
     return Results.Ok(aluno.Id);
 });
 
+app.MapPost("/alunos/logado", (AlunoLogado alunoLogadoRequest) =>
+{
+    alunoLogado.Clear();
+    alunoLogado.Add(alunoLogadoRequest);
+    return Results.Created($"/alunos/logado", alunoLogadoRequest);
+});
+
+app.MapGet("/alunos/logado", () =>
+{
+    var logado = alunoLogado.FirstOrDefault();
+    if (logado == null)
+    {
+        return Results.NotFound(0);
+    }
+    return Results.Ok(logado.Id);
+});
+
 app.Run();
 
 public class Aluno
@@ -101,4 +119,9 @@ public class Aluno
     public string Email { get; set; }
     public string Senha { get; set; }
     public string Turma { get; set; }
+}
+
+public class AlunoLogado
+{
+    public int Id { get; set; }
 }
